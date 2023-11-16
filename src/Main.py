@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from src.ApiWrapper import Car
@@ -17,6 +19,8 @@ else:
     joystick.init()
 
     car = Car("192.168.239.249")
+    # car = Car("192.168.239.179")
+    car.reset()
 
     # Main game loop
     running = True
@@ -29,16 +33,12 @@ else:
 
         if joystick.get_axis(5) > 0.5:
             car.accelerate()
-            print("fwd")
         if joystick.get_axis(4) > 0.5:
             car.decelerate()
-            print("back")
-        if joystick.get_button(0):
+        if joystick.get_button(0) or joystick.get_axis(5) == 0.0:
             car.speed_break()
-            print("break")
         if joystick.get_button(2):
-            car.speed_break()
-            print("straight")
+            car.turn_straight()
 
         if joystick.get_button(1):
             car.speed_break()
