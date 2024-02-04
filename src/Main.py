@@ -1,5 +1,6 @@
 import time
 
+
 import pygame
 
 from src.ApiWrapper import Car
@@ -18,12 +19,13 @@ else:
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
 
-    car = Car("192.168.239.249")
+    car = Car("192.168.20.82")
     # car = Car("192.168.239.179")
     car.reset()
 
     # Main game loop
     running = True
+    start = time.time()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -39,6 +41,12 @@ else:
             car.speed_break()
         if joystick.get_button(2):
             car.turn_straight()
+
+        t1 = time.time() - start
+        if t1 >= 1.5:
+            start = time.time()
+            car.get_picture()
+
 
         if joystick.get_button(1):
             car.speed_break()

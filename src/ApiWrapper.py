@@ -1,3 +1,5 @@
+import time
+
 import requests
 
 class Car:
@@ -9,10 +11,10 @@ class Car:
         self.speedZero = 0
         self.speedMin = -200
 
-        self.turn = 0
-        self.turnMin = -20
-        self.turnZero = 0
-        self.turnMax = 20
+        self.turn = 19
+        self.turnMin = -9
+        self.turnZero = 19
+        self.turnMax = 30
 
         self.state_changed = False
 
@@ -40,7 +42,7 @@ class Car:
     def accelerate(self):
         self.state_changed = False
         if self.speed < self.speedMax:
-            self.speed += int(self.speedMax/5)
+            self.speed = 100#+= int(self.speedMax/10)
             self.state_changed = True
 
     def speed_break(self):
@@ -53,7 +55,7 @@ class Car:
     def decelerate(self):
         self.state_changed = False
         if self.speed > self.speedMin:
-            self.speed += int(self.speedMin/5)
+            self.speed = -100#+= int(self.speedMin/5)
             self.state_changed = True
 
     def send_data(self):
@@ -72,8 +74,13 @@ class Car:
 
     def get_picture(self):
         url = f"http://{self.ipAddress}/photo"
-        requests.get(url, headers=self.headers)
-        pass
+        response = requests.get(url, headers=self.headers)
+        if response.status_code:
+            name = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + ".png"
+            fp = open("images/" + name, 'wb')
+            fp.write(response.content)
+            fp.close()
+        # pass
 
     def reset(self):
         query_parameters = {
