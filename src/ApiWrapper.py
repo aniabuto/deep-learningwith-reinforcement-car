@@ -1,5 +1,3 @@
-import time
-
 import requests
 
 class Car:
@@ -15,6 +13,8 @@ class Car:
         self.turnMin = -9
         self.turnZero = 19
         self.turnMax = 30
+        self.turnLeft = 15
+        self.turnRight = 23
 
         self.state_changed = False
 
@@ -39,11 +39,23 @@ class Car:
             self.state_changed = False
         self.turn = mapped_value
 
+    def steer_direction(self, prediction):
+        if prediction == "left":
+            self.turn = self.turnLeft
+        elif prediction == "right":
+            self.turn = self.turnRight
+        else:
+            self.turn = self.turnZero
+
     def accelerate(self):
         self.state_changed = False
         if self.speed < self.speedMax:
             self.speed = 100#+= int(self.speedMax/10)
             self.state_changed = True
+
+    def change_speed(self):
+        self.speed = 50
+        self.state_changed = True
 
     def speed_break(self):
         if self.speed != self.speedZero:
@@ -71,16 +83,18 @@ class Car:
                 print("sent: ", self.speed, self.turn)
             except Exception as e:
                 print("failed")
+            self.state_changed = False
 
     def get_picture(self):
         url = f"http://{self.ipAddress}/photo"
         response = requests.get(url, headers=self.headers)
-        if response.status_code:
-            name = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + ".png"
-            fp = open("images/" + name, 'wb')
-            fp.write(response.content)
-            fp.close()
+        # if response.status_code:
+        #     name = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + ".png"
+        #     fp = open("images/" + name, 'wb')
+        #     fp.write(response.content)
+        #     fp.close()
         # pass
+        return requests.get(url, headers=self.headers)
 
     def reset(self):
         query_parameters = {
